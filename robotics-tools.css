@@ -1,0 +1,232 @@
+/*
+ * /arm/ page styles. Site tokens come from site.css :root. The stage
+ * is a fixed dark "lightbox" in both themes. The page carries
+ * no explanatory copy: the arm is the interface, and its controls are quiet
+ * overlays that brighten when you reach for them.
+ */
+.robotics-tool-page .frame { width: min(100% - 2rem, var(--frame)); }
+
+.arm-page { padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(4rem, 8vw, 7rem); }
+.tool-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+.tool-status[data-state="error"] {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0 0 0.9rem;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  color: var(--action);
+  font: var(--label)/1.5 var(--mono);
+}
+
+/* ── stage ──────────────────────────────────────────────────────────────── */
+.arm-viewport {
+  --stage-bg: var(--px-0);
+  --stage-ink: var(--px-3);
+  --stage-dim: var(--px-2);
+  --stage-rule: var(--px-1);
+  --stage-gold: var(--px-3);
+  position: relative;
+  overflow: hidden;
+  height: clamp(28rem, 82vh, 50rem);
+  background: var(--stage-bg);
+  border: var(--px) solid var(--stage-rule);
+  color: var(--stage-ink);
+  touch-action: pan-y;
+  isolation: isolate;
+  /* Controls, not text: holding a keycap or dragging the arm never selects. */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.arm-viewport:focus-visible { outline: var(--px) solid var(--stage-ink); outline-offset: calc(var(--px) * -2); }
+.arm-viewport canvas { position: absolute; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; }
+
+.viewer-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--stage-dim);
+  font: var(--label)/1.5 var(--mono);
+}
+
+/* ── tool position: three numbers, lettered in their axis colours ───────── */
+.arm-tcp {
+  position: absolute;
+  z-index: 1;
+  top: clamp(1rem, 2.4vw, 1.9rem);
+  left: clamp(1rem, 2.4vw, 1.9rem);
+  display: grid;
+  gap: 0.15rem;
+  font: var(--t1)/1.5 var(--mono);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.arm-tcp span { display: grid; grid-template-columns: 1.4rem 4.6rem; align-items: baseline; }
+.arm-tcp i { font-style: normal; }
+.arm-tcp b { font-weight: 400; text-align: right; }
+.arm-tcp i { color: var(--stage-dim); }
+
+/* ── frame, angle, joints, home ─────────────────────────────────────────── */
+.arm-options {
+  position: absolute;
+  z-index: 2;
+  top: clamp(1rem, 2.4vw, 1.9rem);
+  right: clamp(1rem, 2.4vw, 1.9rem);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  max-width: 60%;
+}
+.arm-options button {
+  min-height: 2.25rem;
+  padding: 0 0.9rem;
+  border: 0;
+  background: transparent;
+  color: var(--stage-dim);
+  font: var(--t1)/1 var(--mono);
+  cursor: pointer;
+}
+.arm-options .option-button { border: var(--px) solid var(--stage-rule); }
+.arm-options button:hover { color: var(--stage-ink); }
+.arm-options button[aria-pressed="true"] { background: var(--stage-ink); color: var(--stage-bg); }
+.arm-options button:focus-visible { outline: var(--px) solid var(--stage-ink); outline-offset: var(--px); }
+
+/* Key hints on the buttons are for keyboards; touch-only screens drop them. */
+@media (hover: none) and (pointer: coarse), (max-width: 359px) {
+  .key-hint { display: none; }
+}
+
+/* ── keypad: faint until you reach for the arm, inverted while held ─────────── */
+.arm-keypad {
+  position: absolute;
+  z-index: 2;
+  bottom: clamp(1rem, 2.4vw, 1.9rem);
+  left: clamp(1rem, 2.4vw, 1.9rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem 1.5rem;
+  opacity: 0.45;
+}
+.arm-viewport:hover .arm-keypad,
+.arm-viewport:focus-within .arm-keypad { opacity: 1; }
+.keypad-move {
+  display: grid;
+  grid-template-columns: repeat(3, 2.6rem);
+  grid-template-areas: ". w ." "a s d";
+  gap: 0.3rem;
+}
+.keypad-move [data-key="w"] { grid-area: w; }
+.keypad-move [data-key="a"] { grid-area: a; }
+.keypad-move [data-key="s"] { grid-area: s; }
+.keypad-move [data-key="d"] { grid-area: d; }
+.keypad-lift { display: grid; grid-template-columns: 2.6rem; gap: 0.3rem; }
+.keypad-speed { display: grid; grid-template-columns: 4.1rem; gap: 0.3rem; }
+.keypad-mode { display: grid; grid-template-columns: 4.1rem; }
+#arm-keypad-turn[aria-pressed="true"] { border-color: var(--stage-ink); background: var(--stage-ink); color: var(--stage-bg); }
+
+.keycap {
+  display: grid;
+  place-items: center;
+  height: 2.6rem;
+  padding: 0;
+  border: var(--px) solid var(--stage-rule);
+  border-bottom-width: calc(var(--px) * 2);
+  background: var(--stage-bg);
+  color: var(--stage-ink);
+  font: var(--t1)/1 var(--mono);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: none;
+}
+.keycap.on {
+  border-color: var(--stage-ink);
+  background: var(--stage-ink);
+  color: var(--stage-bg);
+  transform: translateY(var(--px));
+  border-bottom-width: var(--px);
+}
+.keycap:focus-visible { outline: var(--px) solid var(--stage-ink); outline-offset: var(--px); }
+
+/* ── notes: how to drive it, open on a first visit ──────────────────────── */
+.arm-notes {
+  position: absolute;
+  z-index: 3;
+  top: calc(clamp(1rem, 2.4vw, 1.9rem) + 3rem);
+  right: clamp(1rem, 2.4vw, 1.9rem);
+  width: min(24rem, calc(100% - 2rem));
+  max-height: calc(100% - 6rem);
+  overflow: auto;
+  padding: 1rem 1.1rem;
+  border: var(--px) solid var(--stage-rule);
+  background: var(--stage-bg);
+  color: var(--stage-dim);
+  font: var(--t1)/1.6 var(--mono);
+}
+.arm-notes[hidden] { display: none; }
+.arm-notes p, .arm-notes dl { -webkit-user-select: text; user-select: text; }
+.arm-notes h2 { margin: 0 0 0.75rem; color: var(--stage-ink); font: inherit; }
+.arm-notes p { margin: 0 0 0.75rem; }
+.arm-notes dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0 0 0.9rem;
+}
+.arm-notes dt { color: var(--stage-ink); }
+.arm-notes dd { margin: 0; }
+.notes-close {
+  min-height: 2.25rem;
+  padding: 0 0.9rem;
+  border: var(--px) solid var(--stage-rule);
+  background: transparent;
+  color: var(--stage-dim);
+  font: var(--t1)/1 var(--mono);
+  cursor: pointer;
+}
+.notes-close:hover { color: var(--stage-ink); }
+.notes-close:focus-visible { outline: var(--px) solid var(--stage-ink); outline-offset: var(--px); }
+
+/* ── labels for the joint arcs drawn on the arm ─────────────────────────── */
+.joint-label {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  margin: -0.5em 0 0 0.55rem;
+  color: var(--stage-ink);
+  font: var(--t1)/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  opacity: 0;
+  padding: 0 0.25rem;
+  background: var(--stage-bg);
+  white-space: nowrap;
+  pointer-events: none;
+  will-change: transform;
+}
+.joint-label.held { background: var(--stage-ink); color: var(--stage-bg); }
+
+.noscript { margin: 1rem; padding: 1rem; border: 1px solid var(--action); }
+
+@media (max-width: 640px) {
+  .arm-viewport { height: clamp(30rem, 80vh, 38rem); }
+  /* Four short buttons fit one row under the readout; the notes sit below. */
+  .arm-options { top: 5rem; right: auto; left: 1rem; max-width: calc(100% - 2rem); flex-wrap: nowrap; justify-content: flex-start; gap: 0.3rem; }
+  .arm-options button { padding: 0 0.45rem; white-space: nowrap; }
+  .arm-notes { top: 8rem; left: 1rem; right: 1rem; width: auto; max-height: calc(100% - 9rem); }
+}

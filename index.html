@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arm</title>
+  <meta name="description" content="Jog one GLUON robot arm from the keyboard, relative to the camera, the base, or the tool.">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="stylesheet" href="site.css">
+  <link rel="stylesheet" href="robotics-tools.css">
+</head>
+<body class="robotics-tool-page">
+  <a class="skip-link" href="#main">Skip to the arm</a>
+  <div class="frame">
+    <header class="masthead">
+      <div class="masthead-branding">
+        <a class="brand" href="https://zi3t.github.io/">William Nguyen</a>
+        <span class="brand-separator" aria-hidden="true">/</span>
+        <span class="brand-section" aria-current="page">arm</span>
+      </div>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <span class="ai-disclosure" title="Developed with AI assistance">ai-assisted</span>
+      </nav>
+    </header>
+
+    <main id="main">
+  <section class="arm-page" aria-labelledby="arm-title">
+    <h1 id="arm-title" class="visually-hidden">One arm. Three frames.</h1>
+    <p id="arm-status" class="tool-status" role="status" aria-live="polite">Loading model…</p>
+
+    <div id="arm-viewport" class="arm-viewport" tabindex="0" aria-label="Interactive GLUON arm; focus this view to use keyboard controls">
+      <div class="viewer-loading">loading arm…</div>
+
+      <div id="arm-tcp" class="arm-tcp" role="group" aria-label="Tool position in metres">
+        <span><i>x</i><b data-axis="x">—</b></span>
+        <span><i>y</i><b data-axis="y">—</b></span>
+        <span><i>z</i><b data-axis="z">—</b></span>
+      </div>
+
+      <div class="arm-options">
+        <button type="button" id="arm-frame" class="option-button" aria-label="Jog frame: view. Press to change." title="What the keys move along: view, base or tool (V)"><span data-frame-name>view</span><span class="key-hint"> (v)</span></button>
+        <button type="button" id="arm-joints-toggle" class="option-button" aria-pressed="false" aria-label="Show joints" title="Show every joint's travel and angle (X)">joints<span class="key-hint"> (x)</span></button>
+        <button type="button" id="arm-home" class="option-button" aria-label="Drive back to the home pose" title="Drive back to the home pose (H)">home<span class="key-hint"> (h)</span></button>
+        <button type="button" id="arm-notes-toggle" class="option-button" aria-expanded="false" aria-controls="arm-notes" aria-label="How to drive the arm" title="How to drive the arm (?)">help<span class="key-hint"> (?)</span></button>
+      </div>
+
+      <section id="arm-notes" class="arm-notes" aria-labelledby="arm-notes-title" hidden>
+        <h2 id="arm-notes-title">how to drive it</h2>
+        <p>hover or tap the arm, then hold keys, or hold the keycaps in the corner.</p>
+        <dl>
+          <dt>drag</dt><dd>turn the camera</dd>
+          <dt>scroll</dt><dd>zoom</dd>
+          <dt>w a s d</dt><dd>move the tool forward, left, back, right</dd>
+          <dt>r f</dt><dd>move it up, down</dd>
+          <dt>i k</dt><dd>tip the tool down, up</dd>
+          <dt>j l</dt><dd>turn it left, right</dd>
+          <dt>u o</dt><dd>roll it left, right</dd>
+          <dt>shift · space</dt><dd>slow · fast</dd>
+          <dt>turn</dt><dd>switch the keycaps between moving and turning</dd>
+          <dt>view<span class="key-hint"> (v)</span></dt><dd>what the keys move along: your view, the robot's base, or the tool's own axes. press to switch</dd>
+          <dt>joints<span class="key-hint"> (x)</span></dt><dd>show every joint's travel and angle</dd>
+          <dt>home<span class="key-hint"> (h)</span></dt><dd>drive back to the start pose</dd>
+          <dt>help<span class="key-hint"> (?)</span></dt><dd>these notes</dd>
+        </dl>
+        <p>an arc fades in when a joint nears its limit. dashed lines through the wrist mean it is close to a singularity, where motion slows.</p>
+        <button type="button" id="arm-notes-close" class="notes-close">close</button>
+      </section>
+
+      <div class="arm-keypad" role="group" aria-label="Jog keys. Hold to move or turn the tool.">
+        <div class="keypad-move">
+          <button type="button" class="keycap" data-key="w" data-turn="i" data-move-label="Move forward" data-turn-label="Tip the tool down" aria-label="Move forward">W</button>
+          <button type="button" class="keycap" data-key="a" data-turn="j" data-move-label="Move left" data-turn-label="Turn the tool left" aria-label="Move left">A</button>
+          <button type="button" class="keycap" data-key="s" data-turn="k" data-move-label="Move back" data-turn-label="Tip the tool up" aria-label="Move back">S</button>
+          <button type="button" class="keycap" data-key="d" data-turn="l" data-move-label="Move right" data-turn-label="Turn the tool right" aria-label="Move right">D</button>
+        </div>
+        <div class="keypad-lift">
+          <button type="button" class="keycap" data-key="r" data-turn="u" data-move-label="Move up" data-turn-label="Roll the tool left" aria-label="Move up">R</button>
+          <button type="button" class="keycap" data-key="f" data-turn="o" data-move-label="Move down" data-turn-label="Roll the tool right" aria-label="Move down">F</button>
+        </div>
+        <div class="keypad-speed">
+          <button type="button" class="keycap wide" data-modifier="fine" aria-label="Fine speed">Shift</button>
+          <button type="button" class="keycap wide" data-modifier="fast" aria-label="Fast speed">Space</button>
+        </div>
+        <div class="keypad-mode">
+          <button type="button" id="arm-keypad-turn" class="keycap wide" aria-pressed="false" aria-label="Keycaps turn the tool" title="Switch the keycaps between moving and turning the tool">turn</button>
+        </div>
+      </div>
+
+      <p class="visually-hidden">Singularity: <span id="arm-singularity">clear</span></p>
+      <ul id="arm-joints" class="visually-hidden" aria-label="Joint positions and limits"></ul>
+    </div>
+  </section>
+    </main>
+  </div>
+  <noscript><p class="noscript">The arm needs JavaScript to load its WebAssembly viewer.</p></noscript>
+  <script>
+      window.__armLoadTimeout = window.setTimeout(() => {
+        if (!document.querySelector("#arm-viewport .viewer-loading")) return;
+        const status = document.getElementById("arm-status");
+        const loading = document.querySelector("#arm-viewport .viewer-loading");
+        if (status) {
+          status.textContent = "Arm failed to load · reload the page";
+          status.dataset.state = "error";
+        }
+        if (loading) loading.textContent = "render unavailable";
+      }, 8000);
+    </script>
+  <script type="module" src="arm-viewer.js"></script>
+</body>
+</html>

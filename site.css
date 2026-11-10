@@ -1,0 +1,264 @@
+/*
+ * Shared design system: monochrome black and white, SF Pro type, one fixed
+ * look on a black page. Every project (home, arm, press) takes its
+ * colour from these four values. Text is --px-3 (white) or --px-2 (grey);
+ * --px-0 is the page, and the greys are for lines and 3D surfaces.
+ */
+:root {
+  color-scheme: dark;
+  --px-0: #000;
+  --px-1: #555;
+  --px-2: #aaa;
+  --px-3: #fff;
+
+  /* semantic names the page and package styles already use */
+  --paper: var(--px-0);
+  --paper-deep: var(--px-0);
+  --ink: var(--px-3);
+  --muted: var(--px-2);
+  --faint: var(--px-2);
+  --rule: var(--px-1);
+  --rule-strong: var(--px-3);
+  --classify: var(--px-3);
+  --action: var(--px-3);
+
+  /* pixel unit: every border and gap is a multiple of it; radius is always 0 */
+  --px: 2px;
+
+  /* Text is 12px; larger sizes are whole multiples of it. */
+  --t1: 12px;
+  --t2: 24px;
+  --t3: 36px;
+  --t4: 48px;
+  /* SF Pro is Apple's system font and cannot be self-hosted; other platforms fall back. */
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: var(--sans);
+
+  /* layout */
+  --frame: 76rem;
+
+  /* type scale aliases kept for existing page styles */
+  --label: var(--t1);
+  --wt-label: 400;
+
+  /* motion: stepped, never eased */
+  --dur-link: 120ms;
+  --ease-arrive: steps(3, end);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: var(--t1)/2 var(--mono);
+  -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; text-decoration-thickness: var(--px); text-underline-offset: 0.3em; }
+a:focus-visible,
+button:focus-visible {
+  outline: var(--px) solid var(--ink);
+  outline-offset: calc(var(--px) * 2);
+}
+button { font: inherit; }
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.5rem 1rem;
+  transform: translateY(-160%);
+  background: var(--ink);
+  color: var(--paper);
+}
+.skip-link:focus { transform: translateY(0); }
+
+.frame {
+  position: relative;
+  z-index: 1;
+  width: min(var(--frame), calc(100% - 3rem));
+  min-height: 100svh;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+}
+
+.masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 4.35rem;
+  font: var(--t1)/2 var(--mono);
+}
+.masthead-branding {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+.brand,
+.brand-separator,
+.brand-section { font-weight: 400; }
+.brand-separator,
+.brand-section { color: var(--muted); }
+a.brand-section:hover { color: var(--ink); }
+.nav-links { display: flex; flex-wrap: wrap; gap: 0.65rem 1.35rem; }
+.nav-links a,
+.ai-disclosure { color: var(--muted); }
+.nav-links a:hover { color: var(--ink); }
+
+/* Home: the covers are the introduction. */
+.home-page .frame {
+  width: 100%;
+  max-width: none;
+}
+.home-page .masthead {
+  min-height: 4.375rem;
+  padding-inline: 2.5rem;
+}
+.home-page .brand-section { color: var(--ink); }
+/* Home: one narrow column, a nav row, the name, then a grid of short lists. */
+.home {
+  width: 100%;
+  max-width: 44rem;
+  margin-inline: auto;
+  padding: 2.5rem 2.5rem 8rem;
+}
+.home-nav { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+.home-nav a { color: var(--muted); }
+.home-nav a:hover,
+.home-nav a[aria-current="page"] { color: var(--ink); }
+.home-intro { padding: 4.5rem 0 3rem; }
+.home-name {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--t2);
+  font-weight: 400;
+  line-height: 1.5;
+}
+.home-role { margin: 0; color: var(--muted); }
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3rem 2.5rem;
+}
+.home-list h2 {
+  margin: 0 0 0.75rem;
+  color: var(--muted);
+  font-size: inherit;
+  font-weight: 400;
+}
+.home-list ul { margin: 0; padding: 0; list-style: none; }
+.home-list a { text-decoration: underline; text-decoration-thickness: var(--px); text-underline-offset: 0.3em; }
+.home-list a:hover { background: var(--ink); color: var(--paper); text-decoration: none; }
+.home-note { color: var(--muted); }
+/* Showroom: the cover blocks, two across inside the home column. */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 3rem 2.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.project-tile {
+  min-width: 0;
+  align-self: end;
+}
+.project-cover-link {
+  display: block;
+  overflow: hidden;
+  border: var(--px) solid var(--ink);
+  background: var(--paper);
+}
+.project-cover-picture { display: block; }
+.project-cover {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+}
+.project-tile:nth-child(2) .project-cover {
+  aspect-ratio: 7 / 5;
+  object-fit: cover;
+  object-position: center;
+}
+.project-caption {
+  margin: 0;
+  padding-top: 0.75rem;
+  color: var(--ink);
+}
+.project-cover-link:hover,
+.project-cover-link:focus-visible { background: var(--ink); }
+.project-grid a:hover { text-decoration: none; }
+.project-tile:hover .project-name,
+.project-tile:focus-within .project-name {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+@media (max-width: 780px) {
+  .frame { width: min(100% - 2rem, var(--frame)); }
+}
+
+@media (min-width: 100rem) {
+  .home-page .masthead {
+    min-height: 5.375rem;
+    padding-inline: 3.5rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .masthead {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+  .nav-links { justify-content: flex-start; max-width: none; }
+  .home-page .masthead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1rem;
+  }
+  .home-page .masthead-branding { gap: 0.5rem; }
+  .home-page .nav-links { gap: 0.75rem; }
+  .home { padding: 1rem 1rem 6rem; }
+  .home-intro { padding: 3rem 0 2rem; }
+  .home-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .project-grid { grid-template-columns: 1fr; gap: 2rem; }
+}
+
+@media print {
+  body { background: #fff; color: #000; }
+  .masthead, .skip-link { display: none !important; }
+  .frame { width: 100%; min-height: 0; display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}

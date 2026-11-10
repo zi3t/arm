@@ -1,0 +1,33 @@
+ZI3T arm viewer
+---------------
+Copyright (c) 2026 William (Viet) Nguyen. All rights reserved, except for the
+third-party parts listed below. The viewer and kinematics code compiled into
+./viewer/arm.wasm and ./viewer/arm.mjs are not licensed for copying,
+redistribution or derived works without prior written permission.
+
+GLUON-2L6-4L3 robot model
+-------------------------
+The URDF (./gluon.urdf, bundled with the viewer) and the meshes in ./meshes/ originate from the
+"gluon" ROS description package
+published by Mintasca:
+
+  https://github.com/mintasca/ros_gluon  (gluon/package.xml: license BSD)
+
+Meshes were converted from STL to GLB and decimated for web delivery;
+geometry is otherwise unmodified.
+
+Kinematics are original C11 (./c/kinematics.c, compiled into
+./viewer/arm.wasm) with a JavaScript reference (./kinematics.js), both
+ported from the author's MIT-licensed clean-room Rust library
+gluon-kinematics; see the git history before its removal, tag
+gluon-rust-final.
+
+Third-party code and fonts in ./viewer/
+---------------------------------------
+- raylib (https://www.raylib.com/), compiled into arm.wasm: zlib/libpng
+  licence, Copyright (c) 2013-2026 Ramon Santamaria (@raysan5).
+- Emscripten runtime (arm.mjs and parts of arm.wasm): MIT licence,
+  Copyright (c) 2010-2014 Emscripten authors.
+- Departure Mono (DepartureMono.ttf): SIL Open Font License 1.1,
+  Copyright 2022-2024 Helena Zhang; licence text in
+  ./viewer/DepartureMono-LICENSE.txt.
